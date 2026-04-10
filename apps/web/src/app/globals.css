@@ -2,9 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Leaflet требует явной высоты контейнера */
+/* Leaflet requires explicit container height */
 .leaflet-container {
   height: 100%;
   width: 100%;
   border-radius: 0.75rem;
+}
+
+/* Design system base overrides */
+@layer base {
+  body {
+    background-color: #F8FAFC;
+    color: #0F172A;
+  }
+}
+
+/* Focus ring — WCAG 2.1 AA */
+@layer utilities {
+  .focus-brand:focus-visible {
+    outline: 2px solid #10B981;
+    outline-offset: 2px;
+  }
 }

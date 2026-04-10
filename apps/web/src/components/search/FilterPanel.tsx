@@ -4,7 +4,6 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback } from 'react'
 import type { SportType } from '@sport/types'
 import { SPORT_LABELS } from '@sport/types'
-import { Button } from '@/components/ui/Button'
 
 const SPORTS: SportType[] = [
   'PADEL', 'TENNIS', 'FOOTBALL', 'BASKETBALL', 'VOLLEYBALL',
@@ -49,16 +48,18 @@ export function FilterPanel() {
   const openNow = params.get('openNow')
 
   return (
-    <div className="space-y-5">
-      {/* Вид спорта */}
+    <div className="space-y-6">
+      {/* Sport */}
       <div>
-        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-          Вид спорта
-        </p>
-        <div className="flex flex-col gap-1">
+        <p className="text-xs font-semibold text-[#94A3B8] uppercase tracking-wider mb-3">Вид спорта</p>
+        <div className="flex flex-col gap-0.5">
           <button
             onClick={() => update('sport', undefined)}
-            className={`text-left text-sm px-3 py-1.5 rounded-lg transition-colors ${!sport ? 'bg-brand-50 text-brand-700 font-medium' : 'text-gray-600 hover:bg-gray-50'}`}
+            className={`text-left text-sm px-3 py-2 rounded-lg transition-colors ${
+              !sport
+                ? 'bg-[#ecfdf5] text-[#047857] font-medium'
+                : 'text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#0F172A]'
+            }`}
           >
             Все виды спорта
           </button>
@@ -66,7 +67,11 @@ export function FilterPanel() {
             <button
               key={s}
               onClick={() => update('sport', s)}
-              className={`text-left text-sm px-3 py-1.5 rounded-lg transition-colors ${sport === s ? 'bg-brand-50 text-brand-700 font-medium' : 'text-gray-600 hover:bg-gray-50'}`}
+              className={`text-left text-sm px-3 py-2 rounded-lg transition-colors ${
+                sport === s
+                  ? 'bg-[#ecfdf5] text-[#047857] font-medium'
+                  : 'text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#0F172A]'
+              }`}
             >
               {SPORT_LABELS[s]}
             </button>
@@ -74,17 +79,19 @@ export function FilterPanel() {
         </div>
       </div>
 
-      {/* Сортировка */}
+      {/* Sort */}
       <div>
-        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-          Сортировка
-        </p>
-        <div className="flex flex-col gap-1">
+        <p className="text-xs font-semibold text-[#94A3B8] uppercase tracking-wider mb-3">Сортировка</p>
+        <div className="flex flex-col gap-0.5">
           {SORT_OPTIONS.map((o) => (
             <button
               key={o.value}
               onClick={() => update('sortBy', o.value)}
-              className={`text-left text-sm px-3 py-1.5 rounded-lg transition-colors ${sortBy === o.value ? 'bg-brand-50 text-brand-700 font-medium' : 'text-gray-600 hover:bg-gray-50'}`}
+              className={`text-left text-sm px-3 py-2 rounded-lg transition-colors ${
+                sortBy === o.value
+                  ? 'bg-[#ecfdf5] text-[#047857] font-medium'
+                  : 'text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#0F172A]'
+              }`}
             >
               {o.label}
             </button>
@@ -92,17 +99,19 @@ export function FilterPanel() {
         </div>
       </div>
 
-      {/* Радиус */}
+      {/* Radius */}
       <div>
-        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-          Радиус поиска
-        </p>
+        <p className="text-xs font-semibold text-[#94A3B8] uppercase tracking-wider mb-3">Радиус поиска</p>
         <div className="flex flex-wrap gap-2">
           {RADIUS_OPTIONS.map((r) => (
             <button
               key={r.value}
               onClick={() => update('radius', r.value)}
-              className={`text-sm px-3 py-1 rounded-full border transition-colors ${radius === r.value ? 'bg-brand-600 text-white border-brand-600' : 'border-gray-300 text-gray-600 hover:border-brand-400'}`}
+              className={`text-sm px-3 py-1.5 rounded-full border transition-colors ${
+                radius === r.value
+                  ? 'bg-[#10B981] text-white border-[#10B981]'
+                  : 'border-[#E2E8F0] text-[#64748B] hover:border-[#10B981] hover:text-[#10B981]'
+              }`}
             >
               {r.label}
             </button>
@@ -110,42 +119,38 @@ export function FilterPanel() {
         </div>
       </div>
 
-      {/* Доп. фильтры */}
+      {/* Extra filters */}
       <div>
-        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-          Дополнительно
-        </p>
-        <div className="space-y-2">
-          <label className="flex items-center gap-2 cursor-pointer">
+        <p className="text-xs font-semibold text-[#94A3B8] uppercase tracking-wider mb-3">Дополнительно</p>
+        <div className="space-y-2.5">
+          <label className="flex items-center gap-2.5 cursor-pointer">
             <input
               type="checkbox"
               checked={hasTrainer === 'true'}
               onChange={(e) => update('hasTrainer', e.target.checked ? 'true' : undefined)}
-              className="rounded text-brand-600 focus:ring-brand-500"
+              className="w-4 h-4 rounded border-[#E2E8F0] accent-[#10B981] focus:ring-[#10B981]"
             />
-            <span className="text-sm text-gray-700">Есть тренер</span>
+            <span className="text-sm text-[#0F172A]">Есть тренер</span>
           </label>
-          <label className="flex items-center gap-2 cursor-pointer">
+          <label className="flex items-center gap-2.5 cursor-pointer">
             <input
               type="checkbox"
               checked={openNow === 'true'}
               onChange={(e) => update('openNow', e.target.checked ? 'true' : undefined)}
-              className="rounded text-brand-600 focus:ring-brand-500"
+              className="w-4 h-4 rounded border-[#E2E8F0] accent-[#10B981] focus:ring-[#10B981]"
             />
-            <span className="text-sm text-gray-700">Открыто сейчас</span>
+            <span className="text-sm text-[#0F172A]">Открыто сейчас</span>
           </label>
         </div>
       </div>
 
-      {/* Сброс */}
-      <Button
-        variant="ghost"
-        size="sm"
-        className="w-full text-gray-500"
+      {/* Reset */}
+      <button
+        className="w-full text-sm text-[#64748B] hover:text-[#0F172A] py-2 border border-[#E2E8F0] rounded-lg hover:border-[#10B981] transition-colors"
         onClick={() => router.push('/venues')}
       >
-        Сбросить все фильтры
-      </Button>
+        Сбросить фильтры
+      </button>
     </div>
   )
 }

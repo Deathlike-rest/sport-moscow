@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import type { VenueListItem } from '@sport/types'
 import { SPORT_LABELS } from '@sport/types'
-import { Badge } from '@/components/ui/Badge'
 
 interface VenueCardProps {
   venue: VenueListItem
@@ -19,33 +18,26 @@ function formatDistance(m: number | null): string {
   return m < 1000 ? `${m} м` : `${(m / 1000).toFixed(1)} км`
 }
 
-function StarRating({ rating }: { rating: number | null }) {
-  if (!rating) return <span className="text-xs text-gray-400">Нет оценок</span>
-  return (
-    <span className="flex items-center gap-1 text-sm font-medium text-amber-600">
-      ★ {rating.toFixed(1)}
-    </span>
-  )
-}
-
 export function VenueCard({ venue, isHighlighted, onClick }: VenueCardProps) {
   const minPrice = venue.sports.reduce<number | null>((min, s) => {
     if (!s.pricePerHourCents) return min
     return min === null ? s.pricePerHourCents : Math.min(min, s.pricePerHourCents)
   }, null)
 
-  const hasTrainer = venue.sports.some((s) => s.hasTrainer)
+  const primarySport = venue.sports[0]
 
   return (
     <Link href={`/venues/${venue.id}`} onClick={onClick}>
       <div
         className={`
-          group bg-white rounded-xl border transition-all cursor-pointer
-          ${isHighlighted ? 'border-brand-500 ring-2 ring-brand-200 shadow-md' : 'border-gray-200 hover:border-brand-300 hover:shadow-sm'}
+          group bg-white rounded-xl overflow-hidden transition-all cursor-pointer
+          ${isHighlighted
+            ? 'shadow-[0_8px_24px_rgba(15,23,42,0.12)] ring-2 ring-[#10B981]'
+            : 'shadow-[0_4px_12px_rgba(15,23,42,0.08)] hover:shadow-[0_8px_24px_rgba(15,23,42,0.12)] hover:-translate-y-1'}
         `}
       >
-        {/* Фото */}
-        <div className="h-40 bg-gray-100 rounded-t-xl overflow-hidden relative">
+        {/* Image */}
+        <div className="relative aspect-video overflow-hidden bg-[#F1F5F9]">
           {venue.primaryImage ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -54,55 +46,76 @@ export function VenueCard({ venue, isHighlighted, onClick }: VenueCardProps) {
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-4xl text-gray-300">
+            <div className="w-full h-full flex items-center justify-center text-5xl text-[#CBD5E1]">
               🏟
             </div>
           )}
+
+          {/* Distance badge */}
           {venue.distanceMeters !== null && (
-            <span className="absolute top-2 right-2 bg-black/60 text-white text-xs px-2 py-0.5 rounded-full">
+            <span className="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white text-xs font-medium px-2.5 py-1 rounded-full">
               {formatDistance(venue.distanceMeters)}
             </span>
           )}
+
+          {/* Sport + availability badges */}
+          <div className="absolute bottom-3 left-3 flex gap-2">
+            {primarySport && (
+              <span className="px-2.5 py-1 bg-[#10B981] text-white text-xs font-semibold rounded-full">
+                {SPORT_LABELS[primarySport.sport]}
+              </span>
+            )}
+            {venue.sports.length > 1 && (
+              <span className="px-2.5 py-1 bg-white/90 backdrop-blur-sm text-[#64748B] text-xs font-semibold rounded-full">
+                +{venue.sports.length - 1}
+              </span>
+            )}
+          </div>
         </div>
 
-        {/* Контент */}
+        {/* Content */}
         <div className="p-4">
-          <h3 className="font-semibold text-gray-900 truncate">{venue.name}</h3>
-
-          {venue.metro && (
-            <p className="text-xs text-gray-500 mt-0.5">
-              🚇 м. {venue.metro}
-            </p>
-          )}
-
-          <p className="text-xs text-gray-500 mt-0.5 truncate">{venue.address}</p>
-
-          {/* Виды спорта */}
-          <div className="flex flex-wrap gap-1 mt-2">
-            {venue.sports.slice(0, 3).map((s) => (
-              <Badge key={s.sport} variant="green">
-                {SPORT_LABELS[s.sport]}
-              </Badge>
-            ))}
-            {venue.sports.length > 3 && (
-              <Badge variant="gray">+{venue.sports.length - 3}</Badge>
+          <div className="flex items-start justify-between mb-1.5">
+            <h3 className="font-semibold text-[#0A2540] text-base leading-snug truncate pr-2">{venue.name}</h3>
+            {venue.avgRating && (
+              <div className="flex items-center gap-1 bg-[#F8FAFC] px-2 py-1 rounded-lg flex-shrink-0">
+                <svg className="w-3.5 h-3.5 text-[#F59E0B] fill-[#F59E0B]" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                </svg>
+                <span className="text-xs font-semibold text-[#0F172A]">{venue.avgRating.toFixed(1)}</span>
+                {venue.reviewCount > 0 && (
+                  <span className="text-xs text-[#64748B]">({venue.reviewCount})</span>
+                )}
+              </div>
             )}
           </div>
 
-          {/* Нижняя строка */}
-          <div className="flex items-center justify-between mt-3">
-            <div className="flex items-center gap-3">
-              <StarRating rating={venue.avgRating} />
-              {venue.reviewCount > 0 && (
-                <span className="text-xs text-gray-400">{venue.reviewCount} отзыв{venue.reviewCount === 1 ? '' : 'а'}</span>
-              )}
+          {venue.metro && (
+            <p className="text-xs text-[#64748B] mb-0.5">🚇 м. {venue.metro}</p>
+          )}
+          <p className="text-xs text-[#64748B] truncate">{venue.address}</p>
+
+          {/* Amenities */}
+          <div className="flex flex-wrap gap-1.5 mt-3">
+            {venue.sports.some((s) => s.hasTrainer) && (
+              <span className="flex items-center gap-1 px-2 py-0.5 bg-[#F8FAFC] rounded-md text-xs text-[#64748B]">
+                <span className="text-[#10B981]">✓</span> Тренер
+              </span>
+            )}
+          </div>
+
+          {/* Price row */}
+          <div className="flex items-center justify-between mt-3 pt-3 border-t border-[#E2E8F0]">
+            <div>
+              <span className="text-xs text-[#64748B]">от </span>
+              <span className="text-xl font-bold text-[#0A2540]">
+                {minPrice ? `${Math.round(minPrice / 100)} ₽` : '—'}
+              </span>
+              {minPrice && <span className="text-xs text-[#64748B]">/час</span>}
             </div>
-            <div className="text-right">
-              <p className="text-sm font-semibold text-brand-700">{formatPrice(minPrice)}</p>
-              {hasTrainer && (
-                <p className="text-xs text-gray-400">Есть тренер</p>
-              )}
-            </div>
+            <span className="px-4 py-2 bg-[#10B981] text-white rounded-full text-xs font-semibold hover:bg-[#059669] transition-colors">
+              Подробнее
+            </span>
           </div>
         </div>
       </div>

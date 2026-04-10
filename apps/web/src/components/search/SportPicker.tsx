@@ -32,12 +32,12 @@ export function SportPicker({ userLat, userLng }: SportPickerProps) {
         <button
           key={sport}
           onClick={() => pick(sport)}
-          className="flex flex-col items-center gap-2 p-4 bg-white rounded-xl border border-gray-200 hover:border-brand-400 hover:shadow-sm transition-all group"
+          className="flex flex-col items-center gap-2.5 p-5 bg-white rounded-xl border border-[#E2E8F0] hover:border-[#10B981] hover:shadow-[0_4px_12px_rgba(15,23,42,0.08)] transition-all group"
         >
-          <span className="text-3xl group-hover:scale-110 transition-transform">
+          <span className="text-3xl group-hover:scale-110 transition-transform duration-200">
             {SPORT_ICONS[sport]}
           </span>
-          <span className="text-sm font-medium text-gray-700 text-center leading-tight">
+          <span className="text-sm font-medium text-[#64748B] group-hover:text-[#0A2540] text-center leading-tight transition-colors">
             {SPORT_LABELS[sport]}
           </span>
         </button>

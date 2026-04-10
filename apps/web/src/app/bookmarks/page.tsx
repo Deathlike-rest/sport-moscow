@@ -27,16 +27,21 @@ export default function BookmarksPage() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-64">
-        <Spinner className="w-8 h-8" />
+        <Spinner className="w-8 h-8 text-[#10B981]" />
       </div>
     )
   }
 
   if (!isAuthenticated) {
     return (
-      <div className="max-w-2xl mx-auto px-4 py-16 text-center">
-        <p className="text-gray-500 mb-4">Войдите, чтобы просматривать избранное.</p>
-        <Link href="/login" className="text-brand-600 hover:underline font-medium">
+      <div className="max-w-2xl mx-auto px-4 py-20 text-center">
+        <div className="w-16 h-16 bg-[#F1F5F9] rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl">🔖</div>
+        <h2 className="text-xl font-bold text-[#0A2540] mb-2">Войдите, чтобы открыть избранное</h2>
+        <p className="text-[#64748B] mb-6 text-sm">Сохраняйте понравившиеся площадки и возвращайтесь к ним в любое время</p>
+        <Link
+          href="/login"
+          className="inline-flex items-center px-6 py-3 bg-[#10B981] text-white rounded-full font-semibold text-sm hover:bg-[#059669] transition-colors"
+        >
           Войти
         </Link>
       </div>
@@ -44,16 +49,25 @@ export default function BookmarksPage() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Избранное</h1>
+    <div className="max-w-[1200px] mx-auto px-4 sm:px-8 py-8">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-[#0A2540]">Избранное</h1>
+        {venues.length > 0 && (
+          <p className="text-sm text-[#64748B] mt-1">{venues.length} площадок</p>
+        )}
+      </div>
 
       {venues.length === 0 ? (
-        <div className="text-center py-16">
-          <p className="text-gray-400 text-lg mb-2">Список избранного пуст</p>
-          <p className="text-gray-400 text-sm mb-4">
-            Добавляйте площадки, нажимая кнопку «В избранное» на странице площадки
+        <div className="text-center py-20 bg-white rounded-2xl border border-[#E2E8F0]">
+          <div className="w-16 h-16 bg-[#F1F5F9] rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl">🔖</div>
+          <p className="text-lg font-semibold text-[#0A2540] mb-1">Список избранного пуст</p>
+          <p className="text-sm text-[#64748B] mb-6">
+            Нажмите «В избранное» на странице площадки, чтобы сохранить её здесь
           </p>
-          <Link href="/" className="text-brand-600 hover:underline font-medium">
+          <Link
+            href="/venues"
+            className="inline-flex items-center px-6 py-2.5 bg-[#10B981] text-white rounded-full font-semibold text-sm hover:bg-[#059669] transition-colors"
+          >
             Найти площадки
           </Link>
         </div>

@@ -4,7 +4,6 @@ import { useState } from 'react'
 import type { SearchResponse, Review } from '@sport/types'
 import { addReview } from '@/lib/api-client'
 import { useAuth } from '@/lib/hooks/useAuth'
-import { Button } from '@/components/ui/Button'
 
 interface Props {
   venueId: string
@@ -19,11 +18,12 @@ function StarInput({ value, onChange }: { value: number; onChange: (v: number) =
         <button
           key={star}
           type="button"
-          className="text-2xl transition-colors"
-          style={{ color: star <= (hover || value) ? '#f59e0b' : '#d1d5db' }}
+          className="text-2xl transition-colors focus:outline-none"
+          style={{ color: star <= (hover || value) ? '#F59E0B' : '#E2E8F0' }}
           onMouseEnter={() => setHover(star)}
           onMouseLeave={() => setHover(0)}
           onClick={() => onChange(star)}
+          aria-label={`Оценка ${star}`}
         >
           ★
         </button>
@@ -51,7 +51,6 @@ export function ReviewSection({ venueId, initialReviews }: Props) {
       setSuccess(true)
       setRating(0)
       setComment('')
-      // Добавляем оптимистично
       setReviews((prev) => [
         {
           id: Date.now().toString(),
@@ -73,51 +72,64 @@ export function ReviewSection({ venueId, initialReviews }: Props) {
 
   return (
     <section>
-      <h2 className="text-lg font-bold text-gray-900 mb-4">
-        Отзывы{reviews.length > 0 && ` (${reviews.length})`}
+      <h2 className="text-lg font-semibold text-[#0A2540] mb-4">
+        Отзывы{reviews.length > 0 && <span className="text-[#64748B] font-normal ml-1">({reviews.length})</span>}
       </h2>
 
-      {/* Форма */}
+      {/* Review form */}
       {token ? (
-        <form onSubmit={submit} className="mb-6 p-4 bg-gray-50 rounded-xl border border-gray-200">
-          <p className="text-sm font-medium text-gray-700 mb-2">Оставить отзыв</p>
+        <form onSubmit={submit} className="mb-6 p-5 bg-[#F8FAFC] rounded-xl border border-[#E2E8F0]">
+          <p className="text-sm font-medium text-[#0F172A] mb-3">Оставить отзыв</p>
           <StarInput value={rating} onChange={setRating} />
           <textarea
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             placeholder="Ваш комментарий (необязательно)"
             rows={3}
-            className="w-full mt-3 px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-400 resize-none"
+            className="w-full mt-3 px-4 py-3 text-sm bg-white border border-[#E2E8F0] rounded-lg text-[#0F172A] placeholder:text-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-transparent resize-none transition-colors"
           />
-          {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
-          {success && <p className="text-green-600 text-xs mt-1">Отзыв добавлен!</p>}
-          <Button type="submit" size="sm" className="mt-2" disabled={rating === 0 || loading}>
-            Отправить
-          </Button>
+          {error && <p className="text-[#EF4444] text-xs mt-2">{error}</p>}
+          {success && <p className="text-[#10B981] text-xs mt-2">Отзыв добавлен!</p>}
+          <button
+            type="submit"
+            className="mt-3 px-5 py-2 bg-[#10B981] text-white text-sm font-semibold rounded-lg hover:bg-[#059669] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={rating === 0 || loading}
+          >
+            {loading ? 'Отправляем...' : 'Отправить'}
+          </button>
         </form>
       ) : (
-        <p className="text-sm text-gray-500 mb-4">
-          <a href="/login" className="text-brand-600 hover:underline">Войдите</a>, чтобы оставить отзыв.
+        <p className="text-sm text-[#64748B] mb-4">
+          <a href="/login" className="text-[#10B981] hover:text-[#059669] font-medium transition-colors">Войдите</a>, чтобы оставить отзыв.
         </p>
       )}
 
-      {/* Список */}
+      {/* Reviews list */}
       {reviews.length === 0 ? (
-        <p className="text-sm text-gray-400">Отзывов пока нет. Будьте первым!</p>
+        <p className="text-sm text-[#94A3B8] py-4">Отзывов пока нет. Будьте первым!</p>
       ) : (
         <div className="space-y-3">
           {reviews.map((r) => (
-            <div key={r.id} className="p-4 bg-white border border-gray-200 rounded-xl">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-900">
-                  {r.userDisplayName ?? 'Аноним'}
-                </span>
-                <span className="text-amber-500 text-sm">{'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}</span>
+            <div key={r.id} className="p-4 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-full bg-[#10B981] flex items-center justify-center text-white text-sm font-semibold">
+                    {(r.userDisplayName ?? 'А').charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <div className="text-sm font-medium text-[#0F172A]">{r.userDisplayName ?? 'Аноним'}</div>
+                    <div className="text-xs text-[#94A3B8]">
+                      {new Date(r.createdAt).toLocaleDateString('ru-RU')}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex gap-0.5">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <span key={i} style={{ color: i < r.rating ? '#F59E0B' : '#E2E8F0' }}>★</span>
+                  ))}
+                </div>
               </div>
-              {r.comment && <p className="text-sm text-gray-600 mt-1">{r.comment}</p>}
-              <p className="text-xs text-gray-400 mt-1">
-                {new Date(r.createdAt).toLocaleDateString('ru-RU')}
-              </p>
+              {r.comment && <p className="text-sm text-[#64748B] leading-relaxed">{r.comment}</p>}
             </div>
           ))}
         </div>
