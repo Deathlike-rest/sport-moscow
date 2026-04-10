@@ -1,0 +1,26 @@
+{
+  "name": "sport-venues-moscow",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter @sport/types build && concurrently \"pnpm --filter @sport/api dev\" \"pnpm --filter @sport/web dev\"",
+    "build": "pnpm --filter @sport/types build && pnpm --filter @sport/api build && pnpm --filter @sport/web build",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "pnpm -r lint",
+    "db:migrate": "prisma migrate dev --schema=./prisma/schema.prisma",
+    "db:push": "prisma db push --schema=./prisma/schema.prisma",
+    "db:studio": "prisma studio --schema=./prisma/schema.prisma",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:reset": "prisma migrate reset --schema=./prisma/schema.prisma"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.0",
+    "concurrently": "^8.2.2",
+    "prettier": "^3.2.0",
+    "prisma": "^5.13.0",
+    "tsx": "^4.11.0",
+    "typescript": "^5.4.0"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.13.0"
+  }
+}

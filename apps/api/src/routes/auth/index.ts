@@ -1,0 +1,87 @@
+import type { FastifyInstance } from 'fastify'
+import { Type } from '@sinclair/typebox'
+import bcrypt from 'bcryptjs'
+import { prisma } from '../../db/client.js'
+
+const RegisterBody = Type.Object({
+  email: Type.String({ format: 'email' }),
+  password: Type.String({ minLength: 6 }),
+  displayName: Type.Optional(Type.String({ minLength: 1, maxLength: 100 })),
+})
+
+const LoginBody = Type.Object({
+  email: Type.String({ format: 'email' }),
+  password: Type.String(),
+})
+
+export async function authRoutes(app: FastifyInstance) {
+  // POST /auth/register
+  app.post(
+    '/register',
+    { schema: { body: RegisterBody, tags: ['Auth'] } },
+    async (request, reply) => {
+      const { email, password, displayName } = request.body as {
+        email: string
+        password: string
+        displayName?: string
+      }
+
+      const existing = await prisma.user.findUnique({ where: { email } })
+      if (existing) {
+        return reply.status(409).send({ message: 'Email уже зарегистрирован' })
+      }
+
+      const passwordHash = await bcrypt.hash(password, 10)
+      const user = await prisma.user.create({
+        data: { email, passwordHash, displayName },
+      })
+
+      const token = await reply.jwtSign({ sub: user.id, role: user.role })
+
+      return reply.status(201).send({
+        token,
+        user: {
+          id: user.id,
+          email: user.email,
+          displayName: user.displayName,
+          avatarUrl: user.avatarUrl,
+          role: user.role,
+          createdAt: user.createdAt.toISOString(),
+        },
+      })
+    }
+  )
+
+  // POST /auth/login
+  app.post(
+    '/login',
+    { schema: { body: LoginBody, tags: ['Auth'] } },
+    async (request, reply) => {
+      const { email, password } = request.body as { email: string; password: string }
+
+      const user = await prisma.user.findUnique({ where: { email } })
+      if (!user) {
+        return reply.status(401).send({ message: 'Неверный email или пароль' })
+      }
+
+      const valid = await bcrypt.compare(password, user.passwordHash)
+      if (!valid) {
+        return reply.status(401).send({ message: 'Неверный email или пароль' })
+      }
+
+      const token = await reply.jwtSign({ sub: user.id, role: user.role })
+
+      return reply.send({
+        token,
+        user: {
+          id: user.id,
+          email: user.email,
+          displayName: user.displayName,
+          avatarUrl: user.avatarUrl,
+          role: user.role,
+          createdAt: user.createdAt.toISOString(),
+        },
+      })
+    }
+  )
+}
