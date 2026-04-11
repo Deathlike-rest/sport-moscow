@@ -37,6 +37,17 @@ export interface VenueSearchRow {
   total_count: string // bigint comes as string from postgres
 }
 
+// Формула Haversine — расстояние в метрах между двумя точками по координатам
+const HAVERSINE_SQL = (latParam: string, lngParam: string) => `
+  ROUND(
+    6371000 * 2 * ASIN(SQRT(
+      POWER(SIN(RADIANS((v.latitude - ${latParam}) / 2)), 2) +
+      COS(RADIANS(${latParam})) * COS(RADIANS(v.latitude)) *
+      POWER(SIN(RADIANS((v.longitude - ${lngParam}) / 2)), 2)
+    ))
+  )::int
+`
+
 export async function searchVenues(params: GeoSearchParams) {
   const {
     sport,
@@ -55,15 +66,18 @@ export async function searchVenues(params: GeoSearchParams) {
 
   const offset = (page - 1) * limit
 
-  // Строим WHERE-условия как массив SQL-строк с параметрами
   const conditions: string[] = ['v.is_active = true']
-  const values: unknown[] = [lng, lat, radiusMeters] // $1=lng, $2=lat, $3=radius
+  const values: unknown[] = [lat, lng, radiusMeters] // $1=lat, $2=lng, $3=radius
   let idx = 4
 
-  // Гео-фильтр уже в JOIN по ресурсоёмкости, добавим в WHERE тоже
-  conditions.push(
-    `ST_DWithin(v.location::geography, ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography, $3)`
-  )
+  // Гео-фильтр через формулу Haversine
+  conditions.push(`
+    6371000 * 2 * ASIN(SQRT(
+      POWER(SIN(RADIANS((v.latitude - $1) / 2)), 2) +
+      COS(RADIANS($1)) * COS(RADIANS(v.latitude)) *
+      POWER(SIN(RADIANS((v.longitude - $2) / 2)), 2)
+    )) <= $3
+  `)
 
   if (sport) {
     conditions.push(`vs.sport = $${idx}::"SportType"`)
@@ -111,6 +125,8 @@ export async function searchVenues(params: GeoSearchParams) {
     idx += 2
   }
 
+  const distanceSQL = HAVERSINE_SQL('$1', '$2')
+
   const orderClause =
     sortBy === 'rating'
       ? 'v.avg_rating DESC NULLS LAST'
@@ -139,12 +155,7 @@ export async function searchVenues(params: GeoSearchParams) {
       v.review_count,
       vs.price_per_hour_cents,
       vs.has_trainer,
-      ROUND(
-        ST_Distance(
-          v.location::geography,
-          ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography
-        )
-      )::int AS distance_meters,
+      ${distanceSQL} AS distance_meters,
       COUNT(*) OVER() AS total_count
     FROM venues v
     JOIN venue_sports vs ON vs.venue_id = v.id
