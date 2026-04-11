@@ -2,6 +2,7 @@ import type { FastifyInstance } from 'fastify'
 import { Type } from '@sinclair/typebox'
 import bcrypt from 'bcryptjs'
 import { prisma } from '../../db/client.js'
+import { googleAuthRoutes } from './google.js'
 
 const RegisterBody = Type.Object({
   email: Type.String({ format: 'email' }),
@@ -15,6 +16,9 @@ const LoginBody = Type.Object({
 })
 
 export async function authRoutes(app: FastifyInstance) {
+  // Google OAuth routes
+  await app.register(googleAuthRoutes)
+
   // POST /auth/register
   app.post(
     '/register',
@@ -33,7 +37,7 @@ export async function authRoutes(app: FastifyInstance) {
 
       const passwordHash = await bcrypt.hash(password, 10)
       const user = await prisma.user.create({
-        data: { email, passwordHash, displayName },
+        data: { email, passwordHash, displayName: displayName ?? null },
       })
 
       const token = await reply.jwtSign({ sub: user.id, role: user.role })
@@ -60,7 +64,7 @@ export async function authRoutes(app: FastifyInstance) {
       const { email, password } = request.body as { email: string; password: string }
 
       const user = await prisma.user.findUnique({ where: { email } })
-      if (!user) {
+      if (!user || !user.passwordHash) {
         return reply.status(401).send({ message: 'Неверный email или пароль' })
       }
 
