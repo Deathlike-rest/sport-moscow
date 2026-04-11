@@ -26,7 +26,6 @@ export async function googleAuthRoutes(app: FastifyInstance) {
       redirect_uri: config.GOOGLE_REDIRECT_URI,
       response_type: 'code',
       scope: 'openid email profile',
-      access_type: 'offline',
       prompt: 'select_account',
     })
     return reply.redirect(`https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`)
