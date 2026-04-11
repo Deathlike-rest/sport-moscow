@@ -138,40 +138,25 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Right column — decorative card */}
+            {/* Right column — photo */}
             <div className="hidden md:block">
-              <div className="relative bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-                <div className="grid grid-cols-2 gap-3">
-                  {[
-                    { icon: '⚽', label: 'Футбол', count: '120+' },
-                    { icon: '🎾', label: 'Теннис', count: '85+' },
-                    { icon: '🏀', label: 'Баскетбол', count: '65+' },
-                    { icon: '🏐', label: 'Волейбол', count: '40+' },
-                    { icon: '🏸', label: 'Бадминтон', count: '55+' },
-                    { icon: '🥊', label: 'Бокс', count: '30+' },
-                  ].map((item) => (
-                    <div
-                      key={item.label}
-                      className="bg-white/10 rounded-xl p-4 flex items-center gap-3 hover:bg-white/20 transition-colors cursor-pointer"
-                      onClick={() => router.push(`/venues?sport=${item.label.toUpperCase()}`)}
-                    >
-                      <span className="text-2xl">{item.icon}</span>
-                      <div>
-                        <div className="text-sm font-medium text-white">{item.label}</div>
-                        <div className="text-xs text-white/60">{item.count} площадок</div>
-                      </div>
+              <div className="relative">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=1080&auto=format&fit=crop&q=80"
+                  alt="Спортивная площадка"
+                  className="rounded-2xl shadow-2xl shadow-black/30 w-full h-[480px] object-cover"
+                />
+                <div className="absolute bottom-6 left-6 right-6 bg-white/95 backdrop-blur-sm rounded-xl p-4 shadow-lg">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-sm text-[#64748B]">Ближайшая площадка</div>
+                      <div className="font-semibold text-[#0A2540] mt-0.5">ФК «Динамо»</div>
                     </div>
-                  ))}
-                </div>
-
-                <div className="mt-4 p-4 bg-[#10B981]/20 rounded-xl border border-[#10B981]/30 flex items-center justify-between">
-                  <div>
-                    <div className="text-xs text-white/70">Ближайшая открытая</div>
-                    <div className="font-semibold text-white mt-0.5">ФК «Динамо» — 1.2 км</div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-xs text-white/70">от</div>
-                    <div className="text-xl font-bold text-[#10B981]">1 500₽</div>
+                    <div className="text-right">
+                      <div className="text-sm text-[#64748B]">от</div>
+                      <div className="text-2xl font-bold text-[#10B981]">1 500₽</div>
+                    </div>
                   </div>
                 </div>
               </div>

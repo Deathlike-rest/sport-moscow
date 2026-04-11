@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import type { VenueListItem } from '@sport/types'
 import { SPORT_LABELS } from '@sport/types'
+import { VenueBookmarkBtn } from './VenueBookmarkBtn'
 
 interface VenueCardProps {
   venue: VenueListItem
@@ -51,12 +52,15 @@ export function VenueCard({ venue, isHighlighted, onClick }: VenueCardProps) {
             </div>
           )}
 
-          {/* Distance badge */}
-          {venue.distanceMeters !== null && (
-            <span className="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white text-xs font-medium px-2.5 py-1 rounded-full">
-              {formatDistance(venue.distanceMeters)}
-            </span>
-          )}
+          {/* Top-right: distance + bookmark */}
+          <div className="absolute top-3 right-3 flex items-center gap-2">
+            {venue.distanceMeters !== null && (
+              <span className="bg-black/60 backdrop-blur-sm text-white text-xs font-medium px-2.5 py-1 rounded-full">
+                {formatDistance(venue.distanceMeters)}
+              </span>
+            )}
+            <VenueBookmarkBtn venueId={venue.id} />
+          </div>
 
           {/* Sport + availability badges */}
           <div className="absolute bottom-3 left-3 flex gap-2">
@@ -99,7 +103,18 @@ export function VenueCard({ venue, isHighlighted, onClick }: VenueCardProps) {
           <div className="flex flex-wrap gap-1.5 mt-3">
             {venue.sports.some((s) => s.hasTrainer) && (
               <span className="flex items-center gap-1 px-2 py-0.5 bg-[#F8FAFC] rounded-md text-xs text-[#64748B]">
-                <span className="text-[#10B981]">✓</span> Тренер
+                <svg className="w-3 h-3 text-[#10B981]" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                Тренер
+              </span>
+            )}
+            {venue.hasParking && (
+              <span className="flex items-center gap-1 px-2 py-0.5 bg-[#F8FAFC] rounded-md text-xs text-[#64748B]">
+                <svg className="w-3 h-3 text-[#10B981]" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h11a2 2 0 012 2v3m0 0h3l3 5v4a1 1 0 01-1 1h-1m-6-1a2 2 0 11-4 0 2 2 0 014 0zm6 0a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                Парковка
               </span>
             )}
           </div>
