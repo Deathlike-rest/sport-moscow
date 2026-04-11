@@ -1,0 +1,11 @@
+#!/bin/sh
+set -e
+
+echo "▶ Applying database schema..."
+npx prisma db push --schema=./prisma/schema.prisma --skip-generate
+
+echo "▶ Setting up PostGIS location column..."
+node prisma/setup-location.mjs
+
+echo "▶ Starting API server..."
+exec node apps/api/dist/index.js

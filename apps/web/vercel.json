@@ -1,0 +1,4 @@
+{
+  "buildCommand": "cd ../.. && pnpm --filter @sport/types build && cd apps/web && next build",
+  "installCommand": "cd ../.. && pnpm install"
+}
