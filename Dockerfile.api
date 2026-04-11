@@ -28,14 +28,14 @@ COPY package.json pnpm-workspace.yaml pnpm-lock.yaml tsconfig.base.json ./
 COPY packages/types/package.json ./packages/types/
 COPY apps/api/package.json ./apps/api/
 
-RUN pnpm install --frozen-lockfile --prod
+# Full install (not --prod) so prisma CLI is available for db push in start.sh
+RUN pnpm install --frozen-lockfile
 
 COPY --from=builder /app/packages/types/dist ./packages/types/dist
 COPY --from=builder /app/apps/api/dist ./apps/api/dist
-COPY prisma ./prisma
-COPY prisma/setup-location.mjs ./prisma/setup-location.mjs
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 
-RUN pnpm exec prisma generate --schema=./prisma/schema.prisma
+COPY prisma ./prisma
 
 COPY apps/api/start.sh ./start.sh
 RUN chmod +x ./start.sh

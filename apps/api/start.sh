@@ -2,7 +2,7 @@
 set -e
 
 echo "▶ Applying database schema..."
-npx prisma db push --schema=./prisma/schema.prisma --skip-generate
+./node_modules/.bin/prisma db push --schema=./prisma/schema.prisma --skip-generate
 
 echo "▶ Setting up PostGIS location column..."
 node prisma/setup-location.mjs
