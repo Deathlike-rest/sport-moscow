@@ -3,6 +3,9 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 try {
+  // Включаем PostGIS расширение
+  await prisma.$executeRawUnsafe('CREATE EXTENSION IF NOT EXISTS postgis')
+
   await prisma.$executeRawUnsafe(
     'ALTER TABLE venues ADD COLUMN IF NOT EXISTS location geometry(Point, 4326)'
   )
