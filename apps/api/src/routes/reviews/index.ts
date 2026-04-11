@@ -85,8 +85,8 @@ export async function reviewRoutes(app: FastifyInstance) {
 
       const review = await prisma.review.upsert({
         where: { venueId_userId: { venueId, userId: payload.sub } },
-        update: { rating, comment },
-        create: { venueId, userId: payload.sub, rating, comment },
+        update: { rating, comment: comment ?? null },
+        create: { venueId, userId: payload.sub, rating, comment: comment ?? null },
       })
 
       return reply.status(201).send({ data: { id: review.id, rating: review.rating } })

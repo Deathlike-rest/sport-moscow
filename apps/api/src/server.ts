@@ -8,13 +8,11 @@ import { reviewRoutes } from './routes/reviews/index.js'
 import { bookmarkRoutes } from './routes/bookmarks/index.js'
 
 export function buildServer() {
+  const isDev = process.env['NODE_ENV'] === 'development'
   const app = Fastify({
-    logger: {
-      transport:
-        process.env['NODE_ENV'] === 'development'
-          ? { target: 'pino-pretty', options: { colorize: true } }
-          : undefined,
-    },
+    logger: isDev
+      ? { transport: { target: 'pino-pretty', options: { colorize: true } } }
+      : true,
   })
 
   // Плагины

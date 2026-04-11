@@ -5,16 +5,16 @@ import type { SportType } from '@sport/types'
 export const MOSCOW_CENTER = { lat: 55.7558, lng: 37.6173 }
 
 export interface GeoSearchParams {
-  sport?: SportType
+  sport?: SportType | undefined
   lat: number
   lng: number
   radiusMeters: number
-  hasTrainer?: boolean
-  maxPriceCents?: number
-  openNow?: boolean
-  district?: string
-  metro?: string
-  sortBy?: 'distance' | 'rating' | 'price'
+  hasTrainer?: boolean | undefined
+  maxPriceCents?: number | undefined
+  openNow?: boolean | undefined
+  district?: string | undefined
+  metro?: string | undefined
+  sortBy?: 'distance' | 'rating' | 'price' | undefined
   page: number
   limit: number
 }
