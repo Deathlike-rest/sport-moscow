@@ -8,7 +8,7 @@ echo "▶ Setting up PostGIS location column..."
 node prisma/setup-location.mjs
 
 echo "▶ Seeding database..."
-./node_modules/.bin/tsx prisma/seed.ts
+./node_modules/.bin/tsx prisma/seed.ts || echo "⚠ Seed failed, continuing startup..."
 
 echo "▶ Starting API server..."
 exec node apps/api/dist/index.js
