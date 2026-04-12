@@ -1,7 +1,9 @@
 import { PrismaClient, SportType } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient({
+  datasources: { db: { url: process.env['DATABASE_URL'] } },
+})
 
 const WEEK_DAYS = [0, 1, 2, 3, 4, 5, 6]
 const DEFAULT_HOURS = { openTime: '08:00', closeTime: '23:00', isClosed: false }
@@ -912,6 +914,10 @@ async function main() {
     }
 
     console.log(`  ✓ ${venue.name}`)
+
+    // Reconnect to avoid Railway proxy timeout on long-running seeds
+    await prisma.$disconnect()
+    await prisma.$connect()
   }
 
   console.log(`\n✅ Done! Seeded ${venues.length} venues with photos and reviews.`)
