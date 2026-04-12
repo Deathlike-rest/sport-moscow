@@ -7,11 +7,63 @@ const WEEK_DAYS = [0, 1, 2, 3, 4, 5, 6]
 const DEFAULT_HOURS = { openTime: '08:00', closeTime: '23:00', isClosed: false }
 const WEEKEND_HOURS = { openTime: '09:00', closeTime: '22:00', isClosed: false }
 
-function makeHours(venueId?: string) {
+function makeHours() {
   return WEEK_DAYS.map((day) => ({
     dayOfWeek: day,
     ...(day === 0 || day === 6 ? WEEKEND_HOURS : DEFAULT_HOURS),
   }))
+}
+
+// Unsplash photos per sport type
+const SPORT_IMAGES: Record<string, string[]> = {
+  PADEL: [
+    'https://images.unsplash.com/photo-1554068865-24cecd4e34b8?w=800&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1612296727716-d9f2e450e21d?w=800&auto=format&fit=crop&q=80',
+  ],
+  TENNIS: [
+    'https://images.unsplash.com/photo-1542144612-1b2d9afe81b6?w=800&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=800&auto=format&fit=crop&q=80',
+  ],
+  FOOTBALL: [
+    'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=800&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1520674316560-b714f12b8e6f?w=800&auto=format&fit=crop&q=80',
+  ],
+  BASKETBALL: [
+    'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1504450758481-7338eba7524a?w=800&auto=format&fit=crop&q=80',
+  ],
+  VOLLEYBALL: [
+    'https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?w=800&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1558021212-51b6ecfa0db9?w=800&auto=format&fit=crop&q=80',
+  ],
+  BADMINTON: [
+    'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=800&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1599474924187-334a4ae5bd3c?w=800&auto=format&fit=crop&q=80',
+  ],
+  SQUASH: [
+    'https://images.unsplash.com/photo-1547347298-4074fc3086f0?w=800&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1554068865-24cecd4e34b8?w=800&auto=format&fit=crop&q=80',
+  ],
+  TABLE_TENNIS: [
+    'https://images.unsplash.com/photo-1609710228159-0fa9bd7c0827?w=800&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1534158914592-062992fbe900?w=800&auto=format&fit=crop&q=80',
+  ],
+  HOCKEY: [
+    'https://images.unsplash.com/photo-1580748141549-71748dbe0bdc?w=800&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1515703407324-5f753afd8be8?w=800&auto=format&fit=crop&q=80',
+  ],
+  SWIMMING: [
+    'https://images.unsplash.com/photo-1530549387789-4c1017266635?w=800&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1560089000-7433a4ebbd64?w=800&auto=format&fit=crop&q=80',
+  ],
+  BOXING: [
+    'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1594737625785-a6cbdabd333c?w=800&auto=format&fit=crop&q=80',
+  ],
+  FITNESS: [
+    'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=800&auto=format&fit=crop&q=80',
+  ],
 }
 
 const venues = [
@@ -19,7 +71,7 @@ const venues = [
   {
     name: 'Padel Moscow',
     slug: 'padel-moscow',
-    description: 'Первый специализированный падел-клуб Москвы. 6 профессиональных кортов.',
+    description: 'Первый специализированный падел-клуб Москвы. 6 профессиональных кортов с панорамными стёклами.',
     address: 'ул. Верхняя Масловка, 20, Москва',
     district: 'Савёловский',
     metro: 'Динамо',
@@ -35,11 +87,17 @@ const venues = [
     trainers: [
       { name: 'Алексей Кузнецов', bio: 'Профессиональный тренер по падлу, 8 лет опыта', pricePerHourCents: 300000, sports: ['PADEL' as SportType] },
     ],
+    primarySport: 'PADEL',
+    reviews: [
+      { rating: 5, comment: 'Отличные корты, приятная атмосфера. Тренер Алексей — профи!' },
+      { rating: 4, comment: 'Хорошее место, немного дорого, но качество на уровне.' },
+      { rating: 5, comment: 'Лучший падел-клуб Москвы, приезжаем сюда каждую неделю.' },
+    ],
   },
   {
     name: 'Padel One',
     slug: 'padel-one',
-    description: 'Современный падел-клуб с крытыми и открытыми кортами.',
+    description: 'Современный падел-клуб с крытыми и открытыми кортами. Прокат ракеток.',
     address: 'Ленинградский пр-т, 39с79, Москва',
     district: 'Аэропорт',
     metro: 'Аэропорт',
@@ -53,6 +111,11 @@ const venues = [
     sports: [{ sport: 'PADEL' as SportType, courtCount: 4, pricePerHourCents: 280000, hasTrainer: true }],
     trainers: [
       { name: 'Мария Соколова', bio: 'Чемпионка России по падлу 2022', pricePerHourCents: 350000, sports: ['PADEL' as SportType] },
+    ],
+    primarySport: 'PADEL',
+    reviews: [
+      { rating: 5, comment: 'Мария — потрясающий тренер, за 3 месяца освоила падел с нуля.' },
+      { rating: 4, comment: 'Корты хорошие, жаль нет кафе.' },
     ],
   },
   {
@@ -71,6 +134,11 @@ const venues = [
     hasCafe: true,
     sports: [{ sport: 'PADEL' as SportType, courtCount: 3, pricePerHourCents: 240000, hasTrainer: true }],
     trainers: [],
+    primarySport: 'PADEL',
+    reviews: [
+      { rating: 4, comment: 'Удобное расположение, цены адекватные.' },
+      { rating: 3, comment: 'Корты неплохие, но раздевалки маловаты.' },
+    ],
   },
 
   // ——— ТЕННИС ———
@@ -94,6 +162,13 @@ const venues = [
       { name: 'Дмитрий Волков', bio: 'Мастер спорта по теннису, тренер сборной', pricePerHourCents: 400000, sports: ['TENNIS' as SportType] },
       { name: 'Елена Громова', bio: '15 лет тренерского опыта', pricePerHourCents: 320000, sports: ['TENNIS' as SportType] },
     ],
+    primarySport: 'TENNIS',
+    reviews: [
+      { rating: 5, comment: 'Лучшие корты в Москве, идеальное покрытие.' },
+      { rating: 5, comment: 'Тренируюсь у Дмитрия уже 2 года, прогресс отличный!' },
+      { rating: 4, comment: 'Всё хорошо, но парковка иногда переполнена.' },
+      { rating: 5, comment: 'Профессиональный подход, отличная атмосфера.' },
+    ],
   },
   {
     name: 'Олимпийский теннисный клуб',
@@ -112,6 +187,11 @@ const venues = [
     sports: [{ sport: 'TENNIS' as SportType, courtCount: 8, pricePerHourCents: 250000, hasTrainer: true }],
     trainers: [
       { name: 'Игорь Степанов', bio: 'Тренер 1 категории', pricePerHourCents: 280000, sports: ['TENNIS' as SportType] },
+    ],
+    primarySport: 'TENNIS',
+    reviews: [
+      { rating: 4, comment: 'Хороший клуб, удобная локация.' },
+      { rating: 5, comment: 'Игорь отличный тренер, занимаемся с сыном уже год.' },
     ],
   },
 
@@ -134,6 +214,12 @@ const venues = [
     trainers: [
       { name: 'Сергей Павлов', bio: 'Бывший игрок ЦСКА, тренер детских команд', pricePerHourCents: 500000, sports: ['FOOTBALL' as SportType] },
     ],
+    primarySport: 'FOOTBALL',
+    reviews: [
+      { rating: 4, comment: 'Хорошее поле, раздевалки чистые.' },
+      { rating: 5, comment: 'Лучшее место для любительского футбола в Люблино!' },
+      { rating: 4, comment: 'Сергей отличный тренер для детей.' },
+    ],
   },
   {
     name: 'Арена Медведково',
@@ -151,6 +237,11 @@ const venues = [
     hasCafe: true,
     sports: [{ sport: 'FOOTBALL' as SportType, courtCount: 2, pricePerHourCents: 800000, hasTrainer: false }],
     trainers: [],
+    primarySport: 'FOOTBALL',
+    reviews: [
+      { rating: 5, comment: 'Отличный манеж, играем здесь корпоративно каждую пятницу.' },
+      { rating: 4, comment: 'Поле хорошее, но цены немного высоковаты.' },
+    ],
   },
   {
     name: 'Спортивный парк Сокол',
@@ -171,6 +262,10 @@ const venues = [
       { sport: 'VOLLEYBALL' as SportType, courtCount: 1, pricePerHourCents: 300000, hasTrainer: false },
     ],
     trainers: [],
+    primarySport: 'FOOTBALL',
+    reviews: [
+      { rating: 4, comment: 'Удобное расположение, доступные цены.' },
+    ],
   },
 
   // ——— БАСКЕТБОЛ ———
@@ -192,6 +287,12 @@ const venues = [
     trainers: [
       { name: 'Никита Орлов', bio: 'Мастер спорта, тренер сборной Москвы', pricePerHourCents: 450000, sports: ['BASKETBALL' as SportType] },
     ],
+    primarySport: 'BASKETBALL',
+    reviews: [
+      { rating: 5, comment: 'Отличный зал, паркет идеальный.' },
+      { rating: 5, comment: 'Никита — один из лучших тренеров по баскетболу в Москве!' },
+      { rating: 4, comment: 'Хорошее место, приходим регулярно.' },
+    ],
   },
   {
     name: 'Баскет Холл Митино',
@@ -209,6 +310,11 @@ const venues = [
     hasCafe: true,
     sports: [{ sport: 'BASKETBALL' as SportType, courtCount: 3, pricePerHourCents: 350000, hasTrainer: true }],
     trainers: [],
+    primarySport: 'BASKETBALL',
+    reviews: [
+      { rating: 4, comment: 'Хороший зал, удобная парковка, кафе приятное.' },
+      { rating: 5, comment: 'Лучший зал в СЗАО, рекомендую!' },
+    ],
   },
 
   // ——— БАДМИНТОН ———
@@ -230,6 +336,11 @@ const venues = [
     trainers: [
       { name: 'Анна Белова', bio: 'КМС по бадминтону, тренирует с 2015 года', pricePerHourCents: 250000, sports: ['BADMINTON' as SportType] },
     ],
+    primarySport: 'BADMINTON',
+    reviews: [
+      { rating: 5, comment: 'Отличные корты, Анна прекрасный тренер!' },
+      { rating: 4, comment: 'Хорошее место, жаль нет парковки.' },
+    ],
   },
   {
     name: 'Бадминтон Центр Ясенево',
@@ -247,13 +358,17 @@ const venues = [
     hasCafe: false,
     sports: [{ sport: 'BADMINTON' as SportType, courtCount: 6, pricePerHourCents: 160000, hasTrainer: true }],
     trainers: [],
+    primarySport: 'BADMINTON',
+    reviews: [
+      { rating: 4, comment: 'Доступные цены, детские группы отличные.' },
+    ],
   },
 
   // ——— СКВОШ ———
   {
     name: 'Squash Moscow City',
     slug: 'squash-moscow-city',
-    description: 'Сквош в центре Москвы. 5 стеклянных кортов.',
+    description: 'Сквош в центре Москвы. 5 стеклянных кортов с трибунами.',
     address: 'Пресненская наб., 10, Москва',
     district: 'Пресненский',
     metro: 'Деловой центр',
@@ -268,6 +383,12 @@ const venues = [
     sports: [{ sport: 'SQUASH' as SportType, courtCount: 5, pricePerHourCents: 320000, hasTrainer: true }],
     trainers: [
       { name: 'Роман Тихонов', bio: 'Чемпион России по сквошу', pricePerHourCents: 400000, sports: ['SQUASH' as SportType] },
+    ],
+    primarySport: 'SQUASH',
+    reviews: [
+      { rating: 5, comment: 'Лучший сквош-клуб Москвы, стеклянные корты — топ!' },
+      { rating: 5, comment: 'Роман — мастер своего дела, за полгода вырос до третьего разряда.' },
+      { rating: 4, comment: 'Отличное место, немного дорого, но того стоит.' },
     ],
   },
 
@@ -288,6 +409,11 @@ const venues = [
     hasCafe: false,
     sports: [{ sport: 'VOLLEYBALL' as SportType, courtCount: 4, pricePerHourCents: 250000, hasTrainer: true }],
     trainers: [],
+    primarySport: 'VOLLEYBALL',
+    reviews: [
+      { rating: 4, comment: 'Хорошие площадки, сборные игры по вечерам — отличная идея.' },
+      { rating: 5, comment: 'Лучшее место для волейбола в Марьино!' },
+    ],
   },
   {
     name: 'Beach Club Серебряный бор',
@@ -308,6 +434,12 @@ const venues = [
       { sport: 'BADMINTON' as SportType, courtCount: 4, pricePerHourCents: 150000, hasTrainer: false },
     ],
     trainers: [],
+    primarySport: 'VOLLEYBALL',
+    reviews: [
+      { rating: 5, comment: 'Летом здесь просто рай! Пляжный волейбол, свежий воздух.' },
+      { rating: 5, comment: 'Потрясающее место, приезжаем каждые выходные.' },
+      { rating: 4, comment: 'Отличные площадки, хорошее кафе рядом.' },
+    ],
   },
 
   // ——— НАСТОЛЬНЫЙ ТЕННИС ———
@@ -328,6 +460,12 @@ const venues = [
     sports: [{ sport: 'TABLE_TENNIS' as SportType, courtCount: 20, pricePerHourCents: 120000, hasTrainer: true }],
     trainers: [
       { name: 'Владимир Козлов', bio: 'МСМК по настольному теннису', pricePerHourCents: 300000, sports: ['TABLE_TENNIS' as SportType] },
+    ],
+    primarySport: 'TABLE_TENNIS',
+    reviews: [
+      { rating: 5, comment: 'Отличный клуб, турниры по выходным — огонь!' },
+      { rating: 4, comment: 'Столы профессиональные, атмосфера приятная.' },
+      { rating: 5, comment: 'Владимир — гениальный тренер, советую всем!' },
     ],
   },
 
@@ -350,6 +488,12 @@ const venues = [
     trainers: [
       { name: 'Наталья Смирнова', bio: 'КМС по плаванию, тренер сборной СДЮШОР', pricePerHourCents: 350000, sports: ['SWIMMING' as SportType] },
     ],
+    primarySport: 'SWIMMING',
+    reviews: [
+      { rating: 5, comment: 'Легендарный бассейн, всегда чистая вода.' },
+      { rating: 4, comment: 'Хорошее место, удобное расположение.' },
+      { rating: 5, comment: 'Наталья — замечательный тренер для детей.' },
+    ],
   },
   {
     name: 'Олимпийский бассейн',
@@ -367,9 +511,14 @@ const venues = [
     hasCafe: true,
     sports: [{ sport: 'SWIMMING' as SportType, courtCount: 10, pricePerHourCents: 90000, hasTrainer: true }],
     trainers: [],
+    primarySport: 'SWIMMING',
+    reviews: [
+      { rating: 4, comment: 'Большой бассейн, всегда есть свободные дорожки.' },
+      { rating: 5, comment: 'Лучший бассейн в центре Москвы!' },
+    ],
   },
 
-  // ——— ФИТНЕС / БОКС ———
+  // ——— БОКС ———
   {
     name: 'Fight Club Moscow',
     slug: 'fight-club-moscow',
@@ -391,6 +540,12 @@ const venues = [
     trainers: [
       { name: 'Максим Рублёв', bio: 'Мастер спорта по боксу, 10 лет тренерского стажа', pricePerHourCents: 400000, sports: ['BOXING' as SportType] },
     ],
+    primarySport: 'BOXING',
+    reviews: [
+      { rating: 5, comment: 'Реальный боевой клуб, атмосфера потрясающая.' },
+      { rating: 5, comment: 'Максим Рублёв — тренер от Бога, за 4 месяца я неузнаваем.' },
+      { rating: 4, comment: 'Отличный зал, хорошее оборудование.' },
+    ],
   },
 
   // ——— ХОККЕЙ ———
@@ -411,6 +566,12 @@ const venues = [
     sports: [{ sport: 'HOCKEY' as SportType, courtCount: 1, pricePerHourCents: 1200000, hasTrainer: true }],
     trainers: [
       { name: 'Андрей Захаров', bio: 'Бывший игрок КХЛ, тренер детских команд', pricePerHourCents: 500000, sports: ['HOCKEY' as SportType] },
+    ],
+    primarySport: 'HOCKEY',
+    reviews: [
+      { rating: 5, comment: 'Отличный лёд, дети в восторге!' },
+      { rating: 5, comment: 'Андрей — прекрасный тренер, сын прогрессирует очень быстро.' },
+      { rating: 4, comment: 'Хорошая арена, есть кафе, удобная парковка.' },
     ],
   },
 
@@ -438,6 +599,11 @@ const venues = [
     trainers: [
       { name: 'Ольга Фёдорова', bio: 'Сертифицированный тренер по теннису и бадминтону', pricePerHourCents: 300000, sports: ['TENNIS' as SportType, 'BADMINTON' as SportType] },
     ],
+    primarySport: 'TENNIS',
+    reviews: [
+      { rating: 4, comment: 'Большой выбор видов спорта под одной крышей — удобно.' },
+      { rating: 5, comment: 'Ольга — универсальный тренер, занимаемся и теннисом и бадминтоном.' },
+    ],
   },
   {
     name: 'ФСК Олимп Тушино',
@@ -459,6 +625,10 @@ const venues = [
       { sport: 'BASKETBALL' as SportType, courtCount: 1, pricePerHourCents: 300000, hasTrainer: false },
     ],
     trainers: [],
+    primarySport: 'TENNIS',
+    reviews: [
+      { rating: 4, comment: 'Доступные цены, хороший выбор видов спорта.' },
+    ],
   },
   {
     name: 'Академия спорта Сокольники',
@@ -482,6 +652,12 @@ const venues = [
     trainers: [
       { name: 'Пётр Иванов', bio: 'Тренер высшей категории, 20 лет опыта', pricePerHourCents: 350000, sports: ['TENNIS' as SportType, 'PADEL' as SportType] },
     ],
+    primarySport: 'TENNIS',
+    reviews: [
+      { rating: 5, comment: 'Прекрасное место в парке, отличная инфраструктура.' },
+      { rating: 5, comment: 'Пётр Иванов — лучший тренер, у которого я занимался.' },
+      { rating: 4, comment: 'Отличный комплекс, удобная парковка.' },
+    ],
   },
   {
     name: 'Центр спорта Лефортово',
@@ -503,6 +679,10 @@ const venues = [
       { sport: 'VOLLEYBALL' as SportType, courtCount: 2, pricePerHourCents: 220000, hasTrainer: false },
     ],
     trainers: [],
+    primarySport: 'FOOTBALL',
+    reviews: [
+      { rating: 4, comment: 'Хороший комплекс, всё необходимое есть.' },
+    ],
   },
   {
     name: 'Арена Коломенское',
@@ -523,6 +703,11 @@ const venues = [
       { sport: 'TENNIS' as SportType, courtCount: 4, pricePerHourCents: 230000, hasTrainer: true },
     ],
     trainers: [],
+    primarySport: 'PADEL',
+    reviews: [
+      { rating: 4, comment: 'Хорошие корты, приятное место рядом с парком.' },
+      { rating: 5, comment: 'Лучшее сочетание цены и качества в этом районе!' },
+    ],
   },
   {
     name: 'Club Racket Коньково',
@@ -547,6 +732,12 @@ const venues = [
     trainers: [
       { name: 'Юлия Кравцова', bio: 'Тренер по теннису и падлу', pricePerHourCents: 320000, sports: ['TENNIS' as SportType, 'PADEL' as SportType] },
     ],
+    primarySport: 'TENNIS',
+    reviews: [
+      { rating: 5, comment: 'Лучший ракеточный клуб в Москве! 4 вида спорта под одной крышей.' },
+      { rating: 4, comment: 'Юлия — отличный тренер, занимаемся уже год.' },
+      { rating: 5, comment: 'Замечательное место, всегда чисто и уютно.' },
+    ],
   },
   {
     name: 'SportZona Бутово',
@@ -569,6 +760,11 @@ const venues = [
       { sport: 'BADMINTON' as SportType, courtCount: 4, pricePerHourCents: 140000, hasTrainer: false },
     ],
     trainers: [],
+    primarySport: 'FOOTBALL',
+    reviews: [
+      { rating: 4, comment: 'Самые доступные цены в ЮАО, всё необходимое есть.' },
+      { rating: 3, comment: 'Неплохо для своей цены, раздевалки простенькие.' },
+    ],
   },
   {
     name: 'Чистые пруды Сквош',
@@ -587,6 +783,12 @@ const venues = [
     sports: [{ sport: 'SQUASH' as SportType, courtCount: 4, pricePerHourCents: 380000, hasTrainer: true }],
     trainers: [
       { name: 'Константин Лебедев', bio: 'Чемпион Европы по сквошу 2019', pricePerHourCents: 500000, sports: ['SQUASH' as SportType] },
+    ],
+    primarySport: 'SQUASH',
+    reviews: [
+      { rating: 5, comment: 'Элитный уровень, Константин — чемпион и настоящий профессионал!' },
+      { rating: 5, comment: 'Лучший сквош в центре Москвы, атмосфера премиальная.' },
+      { rating: 4, comment: 'Дорого, но всё на высшем уровне.' },
     ],
   },
   {
@@ -611,14 +813,19 @@ const venues = [
     trainers: [
       { name: 'Виктория Нова', bio: 'Тренер по фитнесу и плаванию, КМС', pricePerHourCents: 380000, sports: ['FITNESS' as SportType, 'SWIMMING' as SportType] },
     ],
+    primarySport: 'FITNESS',
+    reviews: [
+      { rating: 5, comment: 'Премиальный уровень, вид на Москву-Сити из бассейна — бесценно!' },
+      { rating: 5, comment: 'Виктория — лучший тренер по фитнесу, которого я встречал.' },
+      { rating: 4, comment: 'Дорого, но инфраструктура мирового класса.' },
+    ],
   },
 ]
 
 async function main() {
   console.log('🌱 Seeding database...')
 
-  // Создаём тестового пользователя-администратора
-  await prisma.user.upsert({
+  const adminUser = await prisma.user.upsert({
     where: { email: 'admin@sport.ru' },
     update: {},
     create: {
@@ -629,8 +836,7 @@ async function main() {
     },
   })
 
-  // Создаём обычного тестового пользователя
-  await prisma.user.upsert({
+  const testUser = await prisma.user.upsert({
     where: { email: 'user@sport.ru' },
     update: {},
     create: {
@@ -641,30 +847,74 @@ async function main() {
     },
   })
 
+  const reviewAuthors = [adminUser, testUser]
+
   for (const v of venues) {
-    const { sports, trainers, ...venueData } = v
+    const { sports, trainers, reviews, primarySport, ...venueData } = v
 
     const venue = await prisma.venue.upsert({
       where: { slug: venueData.slug },
       update: {},
       create: {
         ...venueData,
-        sports: {
-          create: sports,
-        },
-        workingHours: {
-          create: makeHours(),
-        },
-        trainers: {
-          create: trainers,
-        },
+        sports: { create: sports },
+        workingHours: { create: makeHours() },
+        trainers: { create: trainers },
       },
     })
+
+    // Add images if not yet added
+    const existingImageCount = await prisma.venueImage.count({ where: { venueId: venue.id } })
+    if (existingImageCount === 0) {
+      const sportImages = SPORT_IMAGES[primarySport] ?? SPORT_IMAGES['FITNESS']!
+      await prisma.venueImage.createMany({
+        data: sportImages.map((url, i) => ({
+          venueId: venue.id,
+          url,
+          altText: venue.name,
+          isPrimary: i === 0,
+          order: i,
+        })),
+      })
+    }
+
+    // Add reviews if not yet added
+    const existingReviewCount = await prisma.review.count({ where: { venueId: venue.id } })
+    if (existingReviewCount === 0 && reviews.length > 0) {
+      let totalRating = 0
+      let count = 0
+      for (const [i, rev] of reviews.entries()) {
+        const author = reviewAuthors[i % reviewAuthors.length]!
+        try {
+          await prisma.review.create({
+            data: {
+              venueId: venue.id,
+              userId: author.id,
+              rating: rev.rating,
+              comment: rev.comment,
+            },
+          })
+          totalRating += rev.rating
+          count++
+        } catch {
+          // skip duplicate (same user reviewed same venue)
+        }
+      }
+      if (count > 0) {
+        await prisma.venue.update({
+          where: { id: venue.id },
+          data: {
+            avgRating: Math.round((totalRating / count) * 10) / 10,
+            reviewCount: count,
+          },
+        })
+      }
+    }
 
     console.log(`  ✓ ${venue.name}`)
   }
 
-  console.log(`\n✅ Done! Created ${venues.length} venues.`)
+  console.log(`\n✅ Done! Seeded ${venues.length} venues with photos and reviews.`)
   console.log('📧 Test accounts:')
   console.log('   admin@sport.ru / admin123')
   console.log('   user@sport.ru  / user123')
