@@ -159,6 +159,7 @@ model Review {
 
   @@unique([venueId, userId])
   @@index([venueId])
+  @@index([userId])
   @@map("reviews")
 }
 
@@ -172,5 +173,6 @@ model Bookmark {
   venue Venue @relation(fields: [venueId], references: [id], onDelete: Cascade)
 
   @@unique([userId, venueId])
+  @@index([userId])
   @@map("bookmarks")
 }

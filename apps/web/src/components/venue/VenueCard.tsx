@@ -2,21 +2,12 @@ import Link from 'next/link'
 import type { VenueListItem } from '@sport/types'
 import { SPORT_LABELS } from '@sport/types'
 import { VenueBookmarkBtn } from './VenueBookmarkBtn'
+import { formatDistance } from '@/lib/utils'
 
 interface VenueCardProps {
   venue: VenueListItem
   isHighlighted?: boolean
   onClick?: () => void
-}
-
-function formatPrice(cents: number | null | undefined): string {
-  if (!cents) return 'Цена не указана'
-  return `${Math.round(cents / 100)} ₽/час`
-}
-
-function formatDistance(m: number | null): string {
-  if (!m) return ''
-  return m < 1000 ? `${m} м` : `${(m / 1000).toFixed(1)} км`
 }
 
 export function VenueCard({ venue, isHighlighted, onClick }: VenueCardProps) {

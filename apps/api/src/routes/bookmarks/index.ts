@@ -1,18 +1,7 @@
-import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
+import type { FastifyInstance } from 'fastify'
 import { Type } from '@sinclair/typebox'
 import { prisma } from '../../db/client.js'
-
-interface JwtPayload {
-  sub: string
-}
-
-async function requireAuth(request: FastifyRequest, reply: FastifyReply) {
-  try {
-    await request.jwtVerify()
-  } catch (err) {
-    reply.send(err)
-  }
-}
+import { requireAuth, type JwtPayload } from '../../lib/auth.js'
 
 export async function bookmarkRoutes(app: FastifyInstance) {
   // Все роуты требуют JWT

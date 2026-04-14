@@ -1,6 +1,7 @@
 import type { FastifyInstance } from 'fastify'
 import { prisma } from '../../db/client.js'
 import { config } from '../../config.js'
+import { serializeUser } from '../../lib/auth.js'
 
 interface GoogleTokenResponse {
   access_token: string
@@ -103,16 +104,7 @@ export async function googleAuthRoutes(app: FastifyInstance) {
 
     const token = await reply.jwtSign({ sub: user.id, role: user.role })
 
-    const userData = encodeURIComponent(
-      JSON.stringify({
-        id: user.id,
-        email: user.email,
-        displayName: user.displayName,
-        avatarUrl: user.avatarUrl,
-        role: user.role,
-        createdAt: user.createdAt.toISOString(),
-      })
-    )
+    const userData = encodeURIComponent(JSON.stringify(serializeUser(user)))
 
     return reply.redirect(`${config.FRONTEND_URL}/auth/callback?token=${token}&user=${userData}`)
   })

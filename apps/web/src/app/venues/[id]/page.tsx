@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import { getVenue, getReviews } from '@/lib/api-client'
 import type { Metadata } from 'next'
 import { SPORT_LABELS } from '@sport/types'
+import { formatPrice } from '@/lib/utils'
 import { WorkingHoursTable } from './WorkingHoursTable'
 import { ReviewSection } from './ReviewSection'
 import { VenueDetailMap } from './VenueDetailMap'
@@ -18,11 +19,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: `${venue.name} — ${venue.address} | СпортМосква`,
     description: venue.description ?? `Спортивная площадка ${venue.name} в Москве`,
   }
-}
-
-function formatPrice(cents: number | null): string {
-  if (!cents) return 'Цена не указана'
-  return `${Math.round(cents / 100)} ₽/час`
 }
 
 export default async function VenueDetailPage({ params }: PageProps) {

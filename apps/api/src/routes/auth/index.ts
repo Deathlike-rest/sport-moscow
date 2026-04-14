@@ -2,6 +2,7 @@ import type { FastifyInstance } from 'fastify'
 import { Type } from '@sinclair/typebox'
 import bcrypt from 'bcryptjs'
 import { prisma } from '../../db/client.js'
+import { serializeUser } from '../../lib/auth.js'
 import { googleAuthRoutes } from './google.js'
 
 const RegisterBody = Type.Object({
@@ -42,17 +43,7 @@ export async function authRoutes(app: FastifyInstance) {
 
       const token = await reply.jwtSign({ sub: user.id, role: user.role })
 
-      return reply.status(201).send({
-        token,
-        user: {
-          id: user.id,
-          email: user.email,
-          displayName: user.displayName,
-          avatarUrl: user.avatarUrl,
-          role: user.role,
-          createdAt: user.createdAt.toISOString(),
-        },
-      })
+      return reply.status(201).send({ token, user: serializeUser(user) })
     }
   )
 
@@ -75,17 +66,7 @@ export async function authRoutes(app: FastifyInstance) {
 
       const token = await reply.jwtSign({ sub: user.id, role: user.role })
 
-      return reply.send({
-        token,
-        user: {
-          id: user.id,
-          email: user.email,
-          displayName: user.displayName,
-          avatarUrl: user.avatarUrl,
-          role: user.role,
-          createdAt: user.createdAt.toISOString(),
-        },
-      })
+      return reply.send({ token, user: serializeUser(user) })
     }
   )
 }

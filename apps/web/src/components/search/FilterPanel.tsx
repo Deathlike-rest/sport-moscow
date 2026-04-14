@@ -2,13 +2,10 @@
 
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback } from 'react'
+import { SPORT_TYPES, SPORT_LABELS } from '@sport/types'
 import type { SportType } from '@sport/types'
-import { SPORT_LABELS } from '@sport/types'
 
-const SPORTS: SportType[] = [
-  'PADEL', 'TENNIS', 'FOOTBALL', 'BASKETBALL', 'VOLLEYBALL',
-  'BADMINTON', 'SQUASH', 'TABLE_TENNIS', 'HOCKEY', 'SWIMMING', 'FITNESS', 'BOXING',
-]
+const SPORTS = SPORT_TYPES.filter((s): s is Exclude<SportType, 'OTHER'> => s !== 'OTHER')
 
 const SORT_OPTIONS = [
   { value: 'distance', label: 'Ближе всего' },

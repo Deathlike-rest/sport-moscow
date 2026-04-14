@@ -1,37 +1,21 @@
 'use client'
 
-import { useState } from 'react'
-import { useAuth } from '@/lib/hooks/useAuth'
-import { addBookmark, removeBookmark } from '@/lib/api-client'
+import { useBookmarkToggle } from '@/lib/hooks/useBookmarkToggle'
 
 export function VenueBookmarkBtn({ venueId }: { venueId: string }) {
-  const { token, isAuthenticated } = useAuth()
-  const [saved, setSaved] = useState(false)
-  const [loading, setLoading] = useState(false)
+  const { saved, loading, toggle, isAuthenticated } = useBookmarkToggle(venueId)
 
   if (!isAuthenticated) return null
 
-  async function toggle(e: React.MouseEvent) {
+  function handleClick(e: React.MouseEvent) {
     e.preventDefault()
     e.stopPropagation()
-    if (!token) return
-    setLoading(true)
-    try {
-      if (saved) {
-        await removeBookmark(venueId, token)
-        setSaved(false)
-      } else {
-        await addBookmark(venueId, token)
-        setSaved(true)
-      }
-    } finally {
-      setLoading(false)
-    }
+    toggle()
   }
 
   return (
     <button
-      onClick={toggle}
+      onClick={handleClick}
       disabled={loading}
       className="w-9 h-9 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-colors disabled:opacity-50"
       aria-label={saved ? 'Убрать из избранного' : 'В избранное'}

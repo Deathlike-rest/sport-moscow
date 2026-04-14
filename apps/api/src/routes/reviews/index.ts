@@ -1,24 +1,13 @@
-import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
+import type { FastifyInstance } from 'fastify'
 import { Type } from '@sinclair/typebox'
 import { prisma } from '../../db/client.js'
+import { requireAuth, type JwtPayload } from '../../lib/auth.js'
+import { REVIEW_DEFAULTS } from '../../constants.js'
 
 const ReviewBody = Type.Object({
-  rating: Type.Integer({ minimum: 1, maximum: 5 }),
-  comment: Type.Optional(Type.String({ maxLength: 2000 })),
+  rating: Type.Integer({ minimum: REVIEW_DEFAULTS.MIN_RATING, maximum: REVIEW_DEFAULTS.MAX_RATING }),
+  comment: Type.Optional(Type.String({ maxLength: REVIEW_DEFAULTS.MAX_COMMENT_LENGTH })),
 })
-
-interface JwtPayload {
-  sub: string
-  role: string
-}
-
-async function requireAuth(request: FastifyRequest, reply: FastifyReply) {
-  try {
-    await request.jwtVerify()
-  } catch (err) {
-    reply.send(err)
-  }
-}
 
 export async function reviewRoutes(app: FastifyInstance) {
   // GET /venues/:venueId/reviews
@@ -29,14 +18,14 @@ export async function reviewRoutes(app: FastifyInstance) {
         params: Type.Object({ venueId: Type.String() }),
         querystring: Type.Object({
           page: Type.Optional(Type.Number({ minimum: 1, default: 1 })),
-          limit: Type.Optional(Type.Number({ minimum: 1, maximum: 50, default: 10 })),
+          limit: Type.Optional(Type.Number({ minimum: 1, maximum: REVIEW_DEFAULTS.MAX_PAGE_LIMIT, default: REVIEW_DEFAULTS.PAGE_LIMIT })),
         }),
         tags: ['Reviews'],
       },
     },
     async (request, reply) => {
       const { venueId } = request.params as { venueId: string }
-      const { page = 1, limit = 10 } = request.query as { page?: number; limit?: number }
+      const { page = 1, limit = REVIEW_DEFAULTS.PAGE_LIMIT } = request.query as { page?: number; limit?: number }
 
       const [reviews, total] = await Promise.all([
         prisma.review.findMany({

@@ -1,17 +1,10 @@
-export type SportType =
-  | 'PADEL'
-  | 'TENNIS'
-  | 'FOOTBALL'
-  | 'BASKETBALL'
-  | 'VOLLEYBALL'
-  | 'BADMINTON'
-  | 'SQUASH'
-  | 'TABLE_TENNIS'
-  | 'HOCKEY'
-  | 'SWIMMING'
-  | 'FITNESS'
-  | 'BOXING'
-  | 'OTHER'
+export const SPORT_TYPES = [
+  'PADEL', 'TENNIS', 'FOOTBALL', 'BASKETBALL', 'VOLLEYBALL',
+  'BADMINTON', 'SQUASH', 'TABLE_TENNIS', 'HOCKEY', 'SWIMMING',
+  'FITNESS', 'BOXING', 'OTHER',
+] as const
+
+export type SportType = (typeof SPORT_TYPES)[number]
 
 export const SPORT_LABELS: Record<SportType, string> = {
   PADEL: 'Падел',

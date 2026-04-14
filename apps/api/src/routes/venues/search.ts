@@ -2,19 +2,15 @@ import type { FastifyInstance } from 'fastify'
 import { Type } from '@sinclair/typebox'
 import { searchVenues, MOSCOW_CENTER } from '../../services/geo.service.js'
 import { enrichVenueRows } from '../../services/venue.service.js'
+import { SPORT_TYPES } from '@sport/types'
 import type { SportType } from '@sport/types'
-
-const SPORT_TYPES = [
-  'PADEL', 'TENNIS', 'FOOTBALL', 'BASKETBALL', 'VOLLEYBALL',
-  'BADMINTON', 'SQUASH', 'TABLE_TENNIS', 'HOCKEY', 'SWIMMING',
-  'FITNESS', 'BOXING', 'OTHER',
-] as const
+import { SEARCH_DEFAULTS } from '../../constants.js'
 
 const QuerySchema = Type.Object({
   sport: Type.Optional(Type.Union(SPORT_TYPES.map((s) => Type.Literal(s)))),
   lat: Type.Optional(Type.Number({ minimum: -90, maximum: 90 })),
   lng: Type.Optional(Type.Number({ minimum: -180, maximum: 180 })),
-  radius: Type.Optional(Type.Number({ minimum: 500, maximum: 50000, default: 15000 })),
+  radius: Type.Optional(Type.Number({ minimum: SEARCH_DEFAULTS.MIN_RADIUS_METERS, maximum: SEARCH_DEFAULTS.MAX_RADIUS_METERS, default: SEARCH_DEFAULTS.RADIUS_METERS })),
   hasTrainer: Type.Optional(Type.Boolean()),
   maxPrice: Type.Optional(Type.Number({ minimum: 0 })),
   openNow: Type.Optional(Type.Boolean()),
@@ -22,7 +18,7 @@ const QuerySchema = Type.Object({
   metro: Type.Optional(Type.String()),
   sortBy: Type.Optional(Type.Union([Type.Literal('distance'), Type.Literal('rating'), Type.Literal('price')])),
   page: Type.Optional(Type.Number({ minimum: 1, default: 1 })),
-  limit: Type.Optional(Type.Number({ minimum: 1, maximum: 50, default: 20 })),
+  limit: Type.Optional(Type.Number({ minimum: 1, maximum: SEARCH_DEFAULTS.MAX_PAGE_LIMIT, default: SEARCH_DEFAULTS.PAGE_LIMIT })),
 })
 
 export async function venueSearchRoutes(app: FastifyInstance) {
@@ -53,9 +49,9 @@ export async function venueSearchRoutes(app: FastifyInstance) {
 
       const lat = q.lat ?? MOSCOW_CENTER.lat
       const lng = q.lng ?? MOSCOW_CENTER.lng
-      const radiusMeters = q.radius ?? 15000
+      const radiusMeters = q.radius ?? SEARCH_DEFAULTS.RADIUS_METERS
       const page = q.page ?? 1
-      const limit = q.limit ?? 20
+      const limit = q.limit ?? SEARCH_DEFAULTS.PAGE_LIMIT
 
       const { rows, total } = await searchVenues({
         sport: q.sport,
